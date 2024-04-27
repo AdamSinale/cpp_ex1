@@ -4,18 +4,21 @@
 #include "Graph.hpp"
 #include <vector>
 
-namespace algorithms {
+namespace ariel {
+    
+    namespace Algorithms {
 
-    int isConnected(const Graph& graph);
+        int isConnected(const Graph& graph);
 
-    int shortestPath(const Graph& graph, int start, int end);
+        int shortestPath(const Graph& graph, int start, int end);
 
-    int isContainsCycle(const Graph& graph);
+        int isContainsCycle(const Graph& graph);
 
-    int isBipartite(const Graph& graph);
+        int isBipartite(const Graph& graph);
 
-    int negativeCycle(const Graph& graph);
+        int negativeCycle(const Graph& graph);
 
+    }
 }
 
 #endif

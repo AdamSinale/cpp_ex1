@@ -3,14 +3,17 @@
 
 #include <vector>
 
-class Graph {
-private:
-    std::vector<std::vector<int>> mat;
+namespace ariel {
+    class Graph {
+    private:
+        std::vector<std::vector<int>> mat;
 
-public:
-    Graph();
-    void loadGraph(const std::vector<std::vector<int>> mat);
-    void printGraph();
-};
-
+    public:
+        Graph();
+        int getEdge(int s, int t);
+        int getNumV();
+        void loadGraph(const std::vector<std::vector<int>> graph);
+        void printGraph();
+    };
+}
 #endif
