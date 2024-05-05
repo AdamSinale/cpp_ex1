@@ -1,24 +1,30 @@
-#ifndef ALGORITHMS_HPP
-#define ALGORITHMS_HPP
+#pragma once
 
 #include "Graph.hpp"
 #include <vector>
+#include <iostream>
+using namespace std;
+using namespace ariel;
 
 namespace ariel {
     
-    namespace Algorithms {
+    class Algorithms {
+    private:
+       static int cycle_exists;
 
-        int isConnected(const Graph& graph);
+    public:
+        static std::vector<int> bfs(const Graph& graph, int start);
 
-        int shortestPath(const Graph& graph, int start, int end);
+        static int isConnected(const Graph& graph);
 
-        int isContainsCycle(const Graph& graph);
+        static int shortestPath(const Graph& graph, int start, int end);
 
-        int isBipartite(const Graph& graph);
+        static int isContainsCycle(const Graph& graph);
 
-        int negativeCycle(const Graph& graph);
+        static int isBipartite(const Graph& graph);
 
-    }
+        static int negativeCycle(const Graph& graph);
+
+    };
 }
 
-#endif

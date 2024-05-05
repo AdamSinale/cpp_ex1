@@ -12,14 +12,12 @@
 
 #define INFINITY 2147483647     //maximum integer posibble
 namespace ariel {
-    namespace Algorithms {
 
-        std::vector<int> bfs(const Graph& graph, int start){
+        std::vector<int> Algorithms::bfs(const Graph& graph, int start){
             int numV = graph.getNumV();
             std::queue<int> q;
             std::vector<int> colors(numV, WHITE);
             std::vector<int> dist(numV, INFINITY);
-            std::vector<int> prev(numV, -1);
             q.push(start);
             colors[start] = GRAY;
             dist[start] = 0;
@@ -27,11 +25,15 @@ namespace ariel {
             while(!q.empty()){
                 int u = q.front();
                 q.pop();
-                for(int i=0; i<numV; i++){
-                    if(graph.getEdge(u,i) > 0 && colors[i] == WHITE){
-                        if(dist[i] > dist[u] + graph.getEdge(u,i)){ dist[i] =dist[u] + graph.getEdge(u,i); }
-                        colors[i] = GRAY;
-                        q.push(i);
+                for(int v=0; v<numV; v++){
+                    if(graph.getEdge(u,v) > 0){
+                        if(colors[v] == WHITE){
+                            if(dist[v] > dist[u] + graph.getEdge(u,v)){ dist[v] = dist[u] + graph.getEdge(u,v); }
+                            colors[v] = GRAY;
+                            q.push(v);
+                        } else if(colors[v] == GRAY || graph.getEdge(v,u) == 0){
+                            cycle_exists = 1;
+                        }
                     }
                 }
                 colors[u] = BLACK;
@@ -57,18 +59,68 @@ namespace ariel {
         }
 
         int Algorithms::isContainsCycle(const Graph& graph){
+            cycle_exists = 0;
             int numV = graph.getNumV();
             for(int i=0; i<numV; i++){
-                //   אם ביאפאס יפגוש שחור יש מעגל
+                bfs(graph, i);
+                if(cycle_exists){ return TRUE; }
             }
+            return FALSE;
         }
 
         int Algorithms::isBipartite(const Graph& graph){
-
+            int numV = graph.getNumV();
+            std::queue<int> q;
+            std::vector<int> colors(numV, WHITE);
+            std::vector<int> groups(numV, -1);
+            for(int i=0; i<numV; i++){
+                if(colors[i] == WHITE){
+                    groups[i] = 0;
+                    q.push(i);
+                    colors[i] = GRAY;
+                    while(!q.empty()){
+                        int u = q.front();
+                        q.pop();
+                        for(int v=0; v<numV; v++){
+                            if(graph.getEdge(u,v) > 0){
+                                if(colors[v] == WHITE){
+                                    groups[v] = !groups[i];
+                                    colors[v] = GRAY;
+                                    q.push(v);
+                                } else if(groups[v] == groups[i]){ return FALSE; }
+                            }
+                        }
+                        colors[u] = BLACK;
+                    }
+                }
+            }
+            return TRUE;
         }
 
         int Algorithms::negativeCycle(const Graph& graph){
-
+            int numV = graph.getNumV();
+            std::vector<int> dist(numV, INFINITY);
+            for(int v=0; v<numV; v++){
+                if(dist[v] == INFINITY){
+                    dist[v] = 0;
+                    for(int u=0; u<numV; u++){
+                        for(int i=0; i<numV; i++){
+                            for(int j=0; j<numV; j++){
+                                if(dist[j] > dist[i] + graph.getEdge(i,j)){
+                                    dist[j] = dist[i] + graph.getEdge(i,j);
+                                }
+                            }
+                        }
+                    }
+                    for(int i=0; i<numV; i++){
+                        for(int j=0; j<numV; j++){
+                            if(dist[j] > dist[i] + graph.getEdge(i,j)){
+                                return TRUE;
+                            }
+                        }
+                    }
+                }
+            }
+            return FALSE;
         }
-    }
 }

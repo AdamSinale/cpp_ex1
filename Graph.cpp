@@ -5,12 +5,12 @@
 
 namespace ariel {
 
-    Graph:: Graph() {}
+    Graph::Graph() {}
     
-    int Graph::getEdge(int s, int t){
-        return mat[s][t];
+    int Graph::getEdge(int s, int t) const {
+        return mat[s][t]; 
     }
-    int Graph::getNumV(){
+    int Graph::getNumV() const {
         return mat.size();
     }
 
