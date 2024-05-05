@@ -39,7 +39,7 @@ namespace ariel {
             return dist;
         }
 
-        int isConnected(const Graph& graph){
+        int Algorithms::isConnected(const Graph& graph){
             int numV = graph.getNumV();
             for(int i=0; i<numV; i++){
                 std::vector<int> dist = bfs(graph, i);
@@ -50,24 +50,24 @@ namespace ariel {
             return TRUE;
         }
 
-        int shortestPath(const Graph& graph, int start, int end){
+        int Algorithms::shortestPath(const Graph& graph, int start, int end){
             std::vector<int> dist = bfs(graph, start);
             if(dist[end] == INFINITY){ return -1; }
             return dist[end];
         }
 
-        int isContainsCycle(const Graph& graph){
+        int Algorithms::isContainsCycle(const Graph& graph){
             int numV = graph.getNumV();
             for(int i=0; i<numV; i++){
                 //   אם ביאפאס יפגוש שחור יש מעגל
             }
         }
 
-        int isBipartite(const Graph& graph){
+        int Algorithms::isBipartite(const Graph& graph){
 
         }
 
-        int negativeCycle(const Graph& graph){
+        int Algorithms::negativeCycle(const Graph& graph){
 
         }
     }
