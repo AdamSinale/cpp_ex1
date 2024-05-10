@@ -2,18 +2,20 @@
 
 #include <vector>
 #include <iostream>
-using namespace std;
+using std::vector;
+using std::cout;
+using std::endl;
 
 namespace ariel {
     class Graph {
     private:
-        std::vector<std::vector<int>> mat;
+        vector<vector<int>> mat;
 
     public:
         Graph();
-        int getEdge(int s, int t) const;
-        int getNumV() const;
-        void loadGraph(const std::vector<std::vector<int>> graph);
+        int getEdge(unsigned int s, unsigned int t) const;
+        unsigned int getNumV() const;
+        void loadGraph(const vector<vector<int>> graph);
         void printGraph();
     };
 }

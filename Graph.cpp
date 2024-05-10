@@ -7,25 +7,28 @@ namespace ariel {
 
     Graph::Graph() {}
     
-    int Graph::getEdge(int s, int t) const {
+    int Graph::getEdge(unsigned int s, unsigned int t) const {
+        if (s<0 && s>=getNumV() && t < 0 && t>=getNumV()){
+            return -1;
+        }
         return mat[s][t]; 
     }
-    int Graph::getNumV() const {
+    unsigned int Graph::getNumV() const {
         return mat.size();
     }
 
-    void Graph::loadGraph(const std::vector<std::vector<int>> graph){
+    void Graph::loadGraph(const vector<vector<int>> graph){
         mat = graph;
     }
 
     void Graph::printGraph(){
-        int numV = mat.size();
+        unsigned int numV = mat.size();
         int count = 0;
-        for(int i=0; i<numV; i++){
-            for(int j=0; j<numV; j++){
+        for(unsigned int i=0; i<numV; i++){
+            for(unsigned int j=0; j<numV; j++){
                 if(mat[i][j] > 0){ count++; }
             }
-            std::cout << "Graph with " << numV << " vertices and " << count << " edges." << std::endl;
+            cout << "Graph with " << numV << " vertices and " << count << " edges." << endl;
         }
     }
 }

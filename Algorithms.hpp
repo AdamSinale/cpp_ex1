@@ -2,29 +2,34 @@
 
 #include "Graph.hpp"
 #include <vector>
+#include <string>
+#include <queue>
 #include <iostream>
-using namespace std;
+#include <climits>
+
+using std::cout;
+using std::endl;
+using std::queue;
+using std::string;
+using std::vector;
 using namespace ariel;
 
-namespace ariel {
-    
-    class Algorithms {
-    private:
-       static int cycle_exists;
+namespace ariel
+{
 
+    class Algorithms
+    {
     public:
-        static std::vector<int> bfs(const Graph& graph, int start);
+        static vector<unsigned int> bfs(const Graph &graph, unsigned int start);
 
-        static int isConnected(const Graph& graph);
+        static int isConnected(const Graph &graph);
 
-        static int shortestPath(const Graph& graph, int start, int end);
+        static string shortestPath(const Graph &graph, unsigned int start, unsigned int end);
 
-        static int isContainsCycle(const Graph& graph);
+        static string isContainsCycle(const Graph &graph);
 
-        static int isBipartite(const Graph& graph);
+        static string isBipartite(const Graph &graph);
 
-        static int negativeCycle(const Graph& graph);
-
+        static int negativeCycle(const Graph &graph);
     };
 }
-
