@@ -1,3 +1,6 @@
+// ID: 3224653689
+// MAIL: adam.sinale@gmail.com
+
 #pragma once
 
 #include <vector>

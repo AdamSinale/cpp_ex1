@@ -1,3 +1,6 @@
+// ID: 3224653689
+// MAIL: adam.sinale@gmail.com
+
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest.h"
 using namespace doctest;
