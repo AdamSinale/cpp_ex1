@@ -1,30 +1,46 @@
-# מטלה 1 - גרפים (Classes and Namespaces)
+// ID: 322453689
+// MAIL: adam.sinale@gmail.com
 
-המטרה שלכם במטלה הזאת היא ליצור מחלקה שמייצגת גרף ולממש אלגוריתמים על הגרפים (זה הזמן להזכר בקורס אלגוריתמים 1).
 
-במטלה הזאת הייצוג של הגרף שלכם יתבצע בעזרת מטריצת שכנויות - https://he.wikipedia.org/wiki/%D7%9E%D7%98%D7%A8%D7%99%D7%A6%D7%AA_%D7%A9%D7%9B%D7%A0%D7%95%D7%AA.
+# Graph Algorithms Explanations
 
-הגרף יכול להיות גרף מכוון ולא מכוון וגם גרף ממושקל. מטריצת השכנויות חייבת להיות מטריצה ריבועית.
+This project includes a  `Graph` class and it's common algorithms. It is implemented in C++ and supports both directed and undirected graphs, negative and positive edges, weighted or not.
 
-עליכם לכתוב את הקבצים הבאים:
+## Graph Class:
 
-```
-Graph.cpp
-Algorithms.cpp
-```
+implements the fuctions need to implement comfortably the Algorithms functionss.
+The Graph is represented as a matrix and given in each Algorithm function.
 
-הקובץ `Graph.cpp` מכיל מחלקה המייצגת גרף.
-המחלקה מכילה את הפעולות `loadGraph` המקבלת מטריצת שכנויות וטוענת אותה לתוך הגרף ו-`printGraph` שמדפיסה את הייצוג של הגרף
- (הפורמט לבחירתכם, ראו דוגמה ב-`Demo.cpp`).
+**Constructor: Graph():**
+Initializes a new instance of the Graph class.
+**loadGraph(matrix):**
+loads the given matrix to the graph object
+**getEdge(i, j):**
+Returns the edge between i and j
+**getNumV():**
+Returns the number of vertices.
+**isDirected():**
+Returns 1 if the graph is considered directed and 0 if not.
+**check_borders(s,f):**
+Checks wether the given verices exist in the graph.
+**printGraph():**
+Prints the graph's info- num of vertices and edges.
 
-הקובץ `Algorithms.cpp` מכיל מימושים לאלגוריתמים על גרפים. ביניהם:
+## Algorithms Library
 
-- `isConnected(g)` - האלגוריתם מקבל גרף ומחזיר 1 אם הגרף קשיר (אחרת מחזיר 0).
-- `shortestPath(g,start,end)` - האלגוריתם מקבל גרף, קודקוד התחלה וקודקוד סיום ומחזיר את המסלול הקל ביותר (במקרה שהגרף לא ממושקל - הקצר ביותר) בין שני הקודקודים. במידה ואין מסלול כזה, האלגוריתם יחזיר -1.
-- `isContainsCycle(g)` - האלגוריתם מקבל גרף ומדפיס מעגל כלשהו. אם לא קיים מעגל בגרף, האלגוריתם יחזיר 0.
-- `isBipartite(g)` - האלגוריתם מקבל גרף ומחזיר את החלוקה של הגרף לגרף דו-צדדי. אם אי אפשר לחלק את הגרף, האלגוריתם יחזיר 0.
-- `negativeCycle(g)` - האלגוריתם מקבל גרף ומוצא מעגל שלילי (כלומר מעגל שסכום המשקלים של הצלעות שלילי). אם לא קיים מעגל כזה, האלגוריתם ידפיס שלא קיים מעגל שלילי.
 
-הקובץ `Demo.cpp` מכיל דוגמאות של קלטים ופלטים.
-עליכם לכתוב בתחילת כל קובץ את מספר תעודת הזהות שלכם ואת המייל. כמו כן, בנוסף לקבצים של המטלה אתם נדרשים להגיש גם קובץ README המתאר את אופן המימוש ואת החלוקה שביצעתם בקוד (סוג של מדריך משתמש). אי עמידה בהנחיות תגרור הפחתה בציון. בהצלחה!
-  
+**isConnected(Graph graph)**:
+checks whether a graph is connected by going over all the vertices and contucting bfs search from each of them checking if one of them doesnt reach another.
+
+**isBipartite(Graph &graph)**:
+checks whether we can split the graph into 2 groups with no edges between a single group's vertices. Does that by going through every SCC and doing bfs, if the current vertex is of groups A, its neibors of group B and when it is already A we return false.
+
+**shortestPath(Graph graph, start, finish)**:
+Finds the shortest path using bellman ford algorithm, going n-1 times and when we do for the nth time, if there is a cycle we check if it's a part of the path and if so return "-1", else we return the path.
+
+**isContainsCycle(Graph &graph)**:
+We run a dfs algorithm from each vertex that will return the paths from him to everyone. the moment one of them returns a path where a vector's parent is the starting vertex(and when undirected not his direct son) it means we have a cycle and return true.
+
+- **negativeCycle(Graph graph)**:
+We run bellman for n times. on the nth time when there is a changed distance and its not a direct son in a undirected graph we go through the changed vertex until we visit him again, if we never do- there is another negative sub-cycle and we will return him.
+
