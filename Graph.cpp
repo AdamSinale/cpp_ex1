@@ -1,7 +1,7 @@
+// ID: 322453689
+// MAIL: adam.sinale@gmail.com
 
 #include "Graph.hpp"
-#include <vector>
-#include <iostream>
 
 namespace ariel {
 
@@ -13,12 +13,30 @@ namespace ariel {
         }
         return mat[s][t]; 
     }
-    unsigned int Graph::getNumV() const {
-        return mat.size();
-    }
 
-    void Graph::loadGraph(const vector<vector<int>> graph){
+    void Graph::loadGraph(const vector<vector<int>> graph, int isDirected){
+        if(graph.size() != graph[0].size()){
+            throw std::invalid_argument("Invalid graph: The graph is not a square matrix.");
+        }
+        if(isDirected != 1 && isDirected != 0){
+            throw std::invalid_argument("Invalid graph: Either 1 for directed or 0 for not.");
+        }
+        for(unsigned int i=0; i<graph.size(); i++){
+            if(graph[i][i] != 0){
+                throw std::invalid_argument("Invalid graph: A vertex cant have an edge with himself");
+            }
+        }
+        if(!isDirected){
+            for(unsigned int i=0; i<graph.size(); i++){
+                for(unsigned int j=0; j<graph.size(); j++){
+                    if(graph[j][i] != graph[i][j]){
+                        throw std::invalid_argument("Invalid graph: Cant be not directed");
+                    }
+                }
+            }
+        }
         mat = graph;
+        directed = isDirected;
     }
 
     void Graph::printGraph(){

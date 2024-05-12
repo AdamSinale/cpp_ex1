@@ -1,173 +1,240 @@
 
-#include "Algorithms.hpp"
+// ID: 322453689
+// MAIL: adam.sinale@gmail.com
 
-#define TRUE 1
-#define FALSE 0
+#include "Algorithms.hpp"
+#include <limits>
+
+#define TRUE "1"
+#define FALSE "0"
 
 #define WHITE -1
 #define GRAY 0
 #define BLACK 1
 
-#define INFINITY 2147483647     //maximum integer posibble
+// #define INFINITY std::numeric_limits<int>::max()     //maximum integer posibble
+#define INFINITY INT_MAX     //maximum integer posibble
 namespace ariel {
 
-        vector<unsigned int> Algorithms::bfs(const Graph& graph, unsigned int start){
-            unsigned int numV = graph.getNumV();
-            queue<unsigned int> q;
-            vector<int> colors(numV, WHITE);
-            vector<int> dist(numV, INFINITY);
-            vector<unsigned int> parent(numV, UINT_MAX);
-            q.push(start);
-            colors[start] = GRAY;
-            dist[start] = 0;
-            while(!q.empty()){
-                unsigned int u = q.front();
-                q.pop();
-                for(unsigned int v=0; v<numV; v++){
-                    if(graph.getEdge(u,v) > 0){
-                        if(colors[v] == WHITE){
-                            if(dist[v] > dist[u] + graph.getEdge(u,v)){ 
-                                dist[v] = dist[u] + graph.getEdge(u,v);
-                                parent[v] = u;
-                            }
-                            colors[v] = GRAY;
-                            q.push(v);
-                        }
+    vector<unsigned int> Algorithms::bfs(const Graph& graph, unsigned int start){
+        unsigned int numV = graph.getNumV();
+        queue<unsigned int> q;
+        vector<int> colors(numV, WHITE);
+        vector<int> dist(numV, INFINITY);
+        vector<unsigned int> parent(numV, UINT_MAX);
+        q.push(start);
+        colors[start] = GRAY;
+        dist[start] = 0;
+        while(!q.empty()){
+            unsigned int u = q.front();
+            q.pop();
+            for(unsigned int v=0; v<numV; v++){
+                if(graph.getEdge(u,v) != 0 && colors[v] == WHITE){
+                    parent[v] = u;
+                    colors[v] = GRAY;
+                    q.push(v);
+                }
+            }
+            colors[u] = BLACK;
+        }
+        return parent;
+    }
+    vector<unsigned int> Algorithms::dfs_h(const Graph& graph, unsigned int start, vector<int>& colors, vector<unsigned int>& parent){
+        unsigned int numV = graph.getNumV();
+        colors[start] = BLACK;
+        for(unsigned int v=0; v<numV; v++){
+            if(graph.getEdge(start,v) != 0 && colors[v] == WHITE){
+                parent[v] = start;
+                dfs_h(graph, v, colors, parent);
+            }
+        }
+        return parent;
+    }
+    vector<unsigned int> Algorithms::dfs(const Graph& graph, unsigned int start){
+        unsigned int numV = graph.getNumV();
+        queue<unsigned int> q;
+        vector<int> colors(numV, WHITE);
+        vector<unsigned int> parent(numV, UINT_MAX);
+        return dfs_h(graph, start, colors, parent);
+    }
+    vector<unsigned int> Algorithms::bellman_ford(const Graph& graph, unsigned int start){
+        unsigned int numV = graph.getNumV();
+        vector<int> dist(numV, INFINITY);
+        vector<unsigned int> parent(numV, UINT_MAX);
+        dist[start] = 0;
+        for(unsigned int u=0; u<numV-1; u++){
+            for(unsigned int i=0; i<numV; i++){
+                for(unsigned int j=0; j<numV; j++){
+                    if(dist[j] > dist[i] + graph.getEdge(i,j)){
+                        dist[j] = dist[i] + graph.getEdge(i,j);
+                        parent[j] = i;
                     }
                 }
-                colors[u] = BLACK;
             }
-            return parent;
         }
-
-        int Algorithms::isConnected(const Graph& graph){
-            unsigned int numV = graph.getNumV();
-            for(unsigned int i=0; i<numV; i++){
-                vector<unsigned int> parent = bfs(graph, i);
-                for(unsigned int j=0; j<numV; j++){
-                    if(parent[j] == UINT_MAX){ return FALSE; }
+        for(unsigned int i=0; i<numV; i++){
+            for(unsigned int j=0; j<numV; j++){
+                if(dist[j] > dist[i] + graph.getEdge(i,j)){
+                    vector<unsigned int> parent(numV, UINT_MAX);
+                    return parent;
                 }
             }
-            return TRUE;
         }
-
-        string Algorithms::shortestPath(const Graph& graph, unsigned int start, unsigned int end){
-            vector<unsigned int> parent = bfs(graph, start);
-            if(parent[end] == INFINITY){ return "-1"; }
-            unsigned int cur = end;
-            string path = std::to_string(cur);
-            while(parent[cur] != UINT_MAX){
-                path = std::to_string(parent[cur]) + "->" + path;
-                cur = parent[cur];
+        return parent;
+    }
+    
+    string Algorithms::isConnected(const Graph& graph){
+        unsigned int numV = graph.getNumV();
+        for(unsigned int i=0; i<numV; i++){
+            vector<unsigned int> parent = bfs(graph, i);
+            for(unsigned int j=0; j<numV; j++){
+                if(i != j && parent[j] == UINT_MAX){ return FALSE; }
             }
-            return path;
         }
+        return TRUE;
+    }
 
-        string Algorithms::isContainsCycle(const Graph& graph){
-            unsigned int numV = graph.getNumV();
-            queue<unsigned int> q;
-            vector<int> colors(numV, WHITE);
-            vector<int> dist(numV, INFINITY);
-            vector<unsigned int> parent(numV, UINT_MAX);
+    string Algorithms::shortestPath(const Graph& graph, unsigned int start, unsigned int end){
+        if(!graph.check_borders(start, end)){
+            throw std::invalid_argument("Invalid vertex: start/end out of range.");
+        }
+        unsigned int numV = graph.getNumV();
+        vector<int> dist(numV, INFINITY);
+        vector<unsigned int> parent(numV, UINT_MAX);
+        dist[start] = 0;
+        for(unsigned int u=0; u<numV-1; u++){
             for(unsigned int i=0; i<numV; i++){
+                for(unsigned int j=0; j<numV; j++){
+                    if(graph.getEdge(i,j)!=0 && dist[j]>dist[i]+graph.getEdge(i,j)){
+                        if(!graph.isDirected() && parent[i] == j){ continue; }
+                        dist[j] = dist[i] + graph.getEdge(i,j);
+                        parent[j] = i;
+                    }
+                }
+            }
+        }
+        if(parent[end] == UINT_MAX){ return "-1"; }
+
+        for(unsigned int i=0; i<numV; i++){
+            for(unsigned int j=0; j<numV; j++){
+                if(!graph.isDirected() && parent[i] == j){ continue; }
+                if(graph.getEdge(i,j)!=0 && dist[i]!=INFINITY && dist[j]>dist[i]+graph.getEdge(i,j)){
+                    unsigned int cur = parent[end];
+                    while(cur != start){ 
+                        if (j == cur){ return "-1"; } 
+                        cur = parent[cur];
+                    }
+                }
+            }
+        }
+        unsigned int cur = end;
+        string path = to_string(cur);
+        while(parent[cur] != UINT_MAX){
+            path = to_string(parent[cur]) + "->" + path;
+            cur = parent[cur];
+        }
+        return path;
+    }
+
+    string Algorithms::isContainsCycle(const Graph& graph){
+        unsigned int numV = graph.getNumV();
+        for(unsigned int u=0; u<numV; u++){
+            vector<unsigned int> parent = dfs(graph, u);
+            for(unsigned int v=0; v<numV; v++){ // for every neighbor with a path to him but not direct
+                if(graph.getEdge(v,u) != 0 && parent[v] != UINT_MAX && (parent[v] != u || graph.isDirected())){
+                    unsigned int cur = v;
+                    string path = to_string(cur); // start from end
+                    while(parent[cur] != UINT_MAX){  // until we get to first
+                        path = to_string(parent[cur]) + "->" + path;  // add to path
+                        cur = parent[cur];
+                    }
+                    path += "->" + to_string(u);
+                    return "The cycle is " + path;
+                }
+            }
+        }
+        return "0";
+    }
+
+    string Algorithms::isBipartite(const Graph& graph){
+        unsigned int numV = graph.getNumV();
+        queue<unsigned int> q;
+        vector<int> colors(numV, WHITE);
+        vector<int> groups(numV, -1);
+        for(unsigned int i=0; i<numV; i++){
+            if(colors[i] == WHITE){
+                groups[i] = 0;
                 q.push(i);
                 colors[i] = GRAY;
-                dist[i] = 0;
                 while(!q.empty()){
                     unsigned int u = q.front();
                     q.pop();
                     for(unsigned int v=0; v<numV; v++){
-                        if(graph.getEdge(u,v) > 0){
+                        if(graph.getEdge(u,v) != 0){
                             if(colors[v] == WHITE){
-                                if(dist[v] > dist[u] + graph.getEdge(u,v)){ 
-                                    dist[v] = dist[u] + graph.getEdge(u,v);
-                                    parent[v] = u;
-                                }
+                                groups[v] = !groups[u];
                                 colors[v] = GRAY;
                                 q.push(v);
-                            } else if(colors[v] == GRAY || graph.getEdge(v,u) == 0){
-                                unsigned int cur = v;
-                                string path = std::to_string(cur);
-                                while(parent[cur] != v){
-                                    path = std::to_string(parent[cur]) + "->" + path;
-                                    cur = parent[cur];
-                                }
-                                path += "->" + std::to_string(cur);
-                                return "The cycle is: " + path;
-                            }
+                            } else if(v != u && groups[v] == groups[u]){ return "0"; }
                         }
                     }
                     colors[u] = BLACK;
                 }
             }
-            return "0";
         }
-
-        string Algorithms::isBipartite(const Graph& graph){
-            unsigned int numV = graph.getNumV();
-            queue<unsigned int> q;
-            vector<int> colors(numV, WHITE);
-            vector<int> groups(numV, -1);
-            for(unsigned int i=0; i<numV; i++){
-                if(colors[i] == WHITE){
-                    groups[i] = 0;
-                    q.push(i);
-                    colors[i] = GRAY;
-                    while(!q.empty()){
-                        unsigned int u = q.front();
-                        q.pop();
-                        for(unsigned int v=0; v<numV; v++){
-                            if(graph.getEdge(u,v) > 0){
-                                if(colors[v] == WHITE){
-                                    groups[v] = !groups[i];
-                                    colors[v] = GRAY;
-                                    q.push(v);
-                                } else if(groups[v] == groups[i]){ return "0"; }
-                            }
-                        }
-                        colors[u] = BLACK;
-                    }
-                }
+        string A = "";
+        string B = "";
+        for(unsigned int i=0; i<numV; i++){
+            if(groups[i] == 0){ 
+                if (A.empty()) { A += to_string(i); }
+                else{ A += ", " + to_string(i); }
             }
-            string A = "";
-            string B = "";
-            for(unsigned int i=0; i<numV; i++){
-                if(groups[i] == 0){ 
-                    if (A.empty()) { A += std::to_string(i); }
-                    A += ", " + std::to_string(i); 
-                }
-                else{ 
-                    if (B.empty()) { B += std::to_string(i); }
-                    B += ", " + std::to_string(i); 
-                }
+            else{ 
+                if (B.empty()) { B += to_string(i); }
+                else{ B += ", " + to_string(i); }
             }
-            return "The graph is bipartite: A={"+A+"}, B={"+B+"}";
         }
+        return "The graph is bipartite A={"+A+"}, B={"+B+"}";
+    }
 
-        int Algorithms::negativeCycle(const Graph& graph){
-            unsigned int numV = graph.getNumV();
-            vector<int> dist(numV, INFINITY);
-            for(unsigned int v=0; v<numV; v++){
-                if(dist[v] == INFINITY){
-                    dist[v] = 0;
-                    for(unsigned int u=0; u<numV; u++){
-                        for(unsigned int i=0; i<numV; i++){
-                            for(unsigned int j=0; j<numV; j++){
-                                if(dist[j] > dist[i] + graph.getEdge(i,j)){
-                                    dist[j] = dist[i] + graph.getEdge(i,j);
-                                }
-                            }
-                        }
-                    }
+    string Algorithms::negativeCycle(const Graph& graph){
+        unsigned int numV = graph.getNumV();
+        vector<int> dist(numV, INFINITY);
+        vector<unsigned int> parent(numV, INFINITY);
+
+        for(unsigned int v=0; v<numV; v++){
+            if(dist[v] == INFINITY){
+                dist[v] = 0;
+                for(unsigned int u=0; u<numV-1; u++){
                     for(unsigned int i=0; i<numV; i++){
                         for(unsigned int j=0; j<numV; j++){
-                            if(dist[j] > dist[i] + graph.getEdge(i,j)){
-                                return TRUE;
+                            if(graph.getEdge(i,j)!=0 && dist[j]>dist[i]+graph.getEdge(i,j)){
+                                if(!graph.isDirected() && parent[i] == j){ continue; }
+                                dist[j] = dist[i] + graph.getEdge(i,j);
+                                parent[j] = i;
                             }
                         }
                     }
                 }
+                for(unsigned int i=0; i<numV; i++){
+                    for(unsigned int j=0; j<numV; j++){
+                        if(!graph.isDirected() && parent[i] == j){ continue; }
+                        if(graph.getEdge(i,j)!=0 && dist[i]!=INFINITY && dist[j]>dist[i]+graph.getEdge(i,j)){
+                            dist[j] = dist[i] + graph.getEdge(i,j);
+                            parent[j] = i;
+                            string path = to_string(i); // start from end
+                            unsigned int cur = parent[i];
+                            while(cur != i){  // until we get to first
+                                path = to_string(cur) + "->" + path;  // add to path
+                                cur = parent[cur];
+                            }
+                            path = to_string(i) + "->" + path;
+                            return "The negative cycle is " + path;
+                        }
+                    }
+                }
             }
-            return FALSE;
         }
+        return "No negative cycle found";
+    }
 }
