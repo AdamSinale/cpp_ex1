@@ -111,6 +111,15 @@ TEST_CASE("Test shortestPath")
         {1, 0, -2, 0}};
     g.loadGraph(graph, 0);
     CHECK(Algorithms::shortestPath(g, 0, 3) == "0->1->2->3");
+
+    graph = { // the shortest path for a clique
+        {0, 1, 3, 5, 8},
+        {1, 0, 1, 3, 5},
+        {3, 1, 0, 1, 3},
+        {5, 3, 1, 0, 1},
+        {8, 5, 3, 1, 0}};
+    g.loadGraph(graph, 1);
+    CHECK(Algorithms::shortestPath(g, 0, 4) == "0->1->2->3->4");
 }
 
 TEST_CASE("Test isContainsCycle")
@@ -247,6 +256,70 @@ TEST_CASE("Test NegativeCycle")
         {0, -1, -1, 0}};
     g.loadGraph(graph, 0);
     CHECK(Algorithms::negativeCycle(g) == "The negative cycle is 1->2->3->1");
+
+    graph = { // Undirected graph with a negative even cycle in a negative cycle(2 common vertices)
+        {0, -1, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, -1},
+        {0, 0, 0, -1, 0, 0, 0, 0},
+        {-1, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, -10, 0, 0},
+        {0, 0, 0, 0, 0, 0, -10, 0},
+        {0, 0, 0, 0, 0, 0, 0, -10},
+        {0, 0, 0, 0, -10, 0, 0, 0}};
+    g.loadGraph(graph, 1);
+    CHECK(Algorithms::negativeCycle(g) == "The negative cycle is 4->5->6->7->4");
+
+    graph = { // Undirected graph with a negative even cycle in a negative cycle(1 common vertex)
+        {0, -1, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, -1, 0, 0, 0},
+        {0, 0, 0, -1, 0, 0, 0, 0},
+        {-1, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, -10, 0, 0},
+        {0, 0, 0, 0, 0, 0, -10, 0},
+        {0, 0, 0, 0, 0, 0, 0, -10},
+        {0, 0, 0, 0, -10, 0, 0, 0}};
+    g.loadGraph(graph, 1);
+    CHECK(Algorithms::negativeCycle(g) == "The negative cycle is 4->5->6->7->4");
+
+    graph = { // Undirected graph with a negative odd cycle in a negative cycle(2 common vertices)
+        {0, -1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, -1},
+        {0, 0, 0, -1, 0, 0, 0},
+        {-1, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, -10, 0},
+        {0, 0, 0, 0, 0, 0, -10},
+        {0, 0, 0, 0, -10, 0, 0}};
+    g.loadGraph(graph, 1);
+    CHECK(Algorithms::negativeCycle(g) == "The negative cycle is 4->5->6->4");
+
+    graph = { // Undirected graph with a negative odd cycle in a negative cycle(1 common vertex)
+        {0, -1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, -1, 0, 0},
+        {0, 0, 0, -1, 0, 0, 0},
+        {-1, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, -10, 0},
+        {0, 0, 0, 0, 0, 0, -10},
+        {0, 0, 0, 0, -10, 0, 0}};
+    g.loadGraph(graph, 1);
+    CHECK(Algorithms::negativeCycle(g) == "The negative cycle is 4->5->6->4");
+
+    graph = { // graph with a positive clique
+        {0, 1, 1, 1, 1},
+        {1, 0, 1, 1, 1},
+        {1, 1, 0, 1, 1},
+        {1, 1, 1, 0, 1},
+        {1, 1, 1, 1, 0}};
+    g.loadGraph(graph, 1);
+    CHECK(Algorithms::negativeCycle(g) == "No negative cycle found");
+
+    graph = { // graph with a negative clique
+        {0, -1, -1, -1, -1},
+        {-1, 0, -1, -1, -1},
+        {-1, -1, 0, -1, -1},
+        {-1, -1, -1, 0, -1},
+        {-1, -1, -1, -1, 0}};
+    g.loadGraph(graph, 1);
+    CHECK(Algorithms::negativeCycle(g) == "The negative cycle is 3->4->3");
 }
 
 TEST_CASE("Test invalid graph")

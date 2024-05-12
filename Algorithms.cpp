@@ -220,13 +220,22 @@ namespace ariel {
                     for(unsigned int j=0; j<numV; j++){
                         if(!graph.isDirected() && parent[i] == j){ continue; }
                         if(graph.getEdge(i,j)!=0 && dist[i]!=INFINITY && dist[j]>dist[i]+graph.getEdge(i,j)){
+                            vector<int> visited(numV, 0);
                             dist[j] = dist[i] + graph.getEdge(i,j);
                             parent[j] = i;
                             string path = to_string(i); // start from end
                             unsigned int cur = parent[i];
+                            int for_2nd_visit =0;
                             while(cur != i){  // until we get to first
                                 path = to_string(cur) + "->" + path;  // add to path
+                                visited[cur] = 1;
                                 cur = parent[cur];
+                                if(visited[cur] && !for_2nd_visit){
+                                    for_2nd_visit = 1;
+                                    path = to_string(parent[cur]);
+                                    i = parent[cur];
+                                    // return to_string(parent[parent[parent[i]]])+"->"+to_string(parent[parent[i]])+"->"+to_string(parent[i])+"->"+to_string(i);
+                                }
                             }
                             path = to_string(i) + "->" + path;
                             return "The negative cycle is " + path;
